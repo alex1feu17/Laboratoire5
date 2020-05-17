@@ -1,4 +1,4 @@
-﻿using BillingManagement.Models;
+﻿using BillingManagement.UI.Models;
 using BillingManagement.UI.ViewModels.Commands;
 using System;
 using System.Collections.Generic;

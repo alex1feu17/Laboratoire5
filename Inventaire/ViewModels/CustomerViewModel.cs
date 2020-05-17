@@ -1,5 +1,5 @@
-﻿using BillingManagement.Business;
-using BillingManagement.Models;
+﻿using BillingManagement.UI.Business;
+using BillingManagement.UI.Models;
 using BillingManagement.UI.ViewModels.Commands;
 using System.Collections.ObjectModel;
 using System.Diagnostics;

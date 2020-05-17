@@ -10,6 +10,7 @@ namespace BillingManagement.UI.Views
         public InvoicesView()
         {
             InitializeComponent();
+           
         }
     }
 }
