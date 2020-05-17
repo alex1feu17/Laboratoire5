@@ -47,4 +47,10 @@
     </Resource>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Customer.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
