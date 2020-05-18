@@ -12,7 +12,7 @@ namespace BillingManagement.UI.Models
         public int InvoiceID { get; set; }
         public object InvoiceId { get; }
         public DateTime CreationDateTime { get; private set; }
-        private double SubTotal { get; set; }
+        public double SubTotal { get; set; }
 
         private Customer _customer;
         private int nextId;

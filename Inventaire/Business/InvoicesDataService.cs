@@ -1,27 +1,22 @@
-﻿using BillingManagement.Models;
+﻿
+using BillingManagement.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace BillingManagement.Business
 {
-    public class InvoicesDataService : IDataService<Models.Invoice>
+    public class InvoicesDataService : IDataService<Invoice>
     {
-        List<Models.Invoice> _invoices;
-        IEnumerable<Models.Customer> _customers;
-        private IEnumerable<UI.Models.Customer> customerData;
+        List<Invoice> _invoices;
+        IEnumerable<Customer> _customers;
 
-        public InvoicesDataService(IEnumerable<Models.Customer> customers)
+        public InvoicesDataService(IEnumerable<Customer> customers)
         {
-            _invoices = new List<Models.Invoice>();
+            _invoices = new List<Invoice>();
             _customers = customers;
 
             initValues();
-        }
-
-        public InvoicesDataService(IEnumerable<UI.Models.Customer> customerData)
-        {
-            this.customerData = customerData;
         }
 
         private void initValues()
@@ -31,11 +26,11 @@ namespace BillingManagement.Business
 
             foreach (var customer in _customers)
             {
-                int nbInvoices = rnd.Next(0,10);
+                int nbInvoices = rnd.Next(0, 10);
 
                 for (int i = 0; i < nbInvoices; i++)
                 {
-                    var invoice = new Models.Invoice(customer);
+                    var invoice = new Invoice(customer);
                     invoice.SubTotal = rnd.NextDouble() * 100 + 50;
 
                     customer.Invoices.Add(invoice);
@@ -44,9 +39,10 @@ namespace BillingManagement.Business
             }
         }
 
-        public IEnumerable<Models.Invoice> GetAll()
+        public IEnumerable<Invoice> GetAll()
         {
-            foreach (var item in _invoices) {
+            foreach (var item in _invoices)
+            {
                 yield return item;
             }
 
