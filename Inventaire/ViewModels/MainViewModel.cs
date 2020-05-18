@@ -1,8 +1,12 @@
 ﻿using BillingManagement.UI.Models;
 using BillingManagement.UI.ViewModels.Commands;
+using Inventaire;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
+using System.Windows;
 
 namespace BillingManagement.UI.ViewModels
 {
@@ -13,6 +17,26 @@ namespace BillingManagement.UI.ViewModels
 
 
 		private bool returnbutton = false;
+		public Boolean ReturnButton
+		{
+			get { return returnbutton; }
+			set
+			{
+				returnbutton = value;
+				OnPropertyChanged("ReturnButton");
+			}
+		}
+
+		public Boolean ButtonEnabled
+		{
+			get { return buttonenabled; }
+			set
+			{
+				buttonenabled = value;
+				OnPropertyChanged("ButtonEnabled");
+			}
+		}
+
 		public BaseViewModel VM
 		{
 			get { return _vm; }
@@ -21,7 +45,18 @@ namespace BillingManagement.UI.ViewModels
 				OnPropertyChanged();
 			}
 		}
+		CustomerContext db;
+		private ObservableCollection<Customer> dataCustomers;
 
+		public ObservableCollection<Customer> DBCustomers
+		{
+			get => dataCustomers;
+			set
+			{
+				dataCustomers = value;
+				OnPropertyChanged();
+			}
+		}
 		private string searchCriteria;
 
 		public string SearchCriteria
@@ -43,13 +78,20 @@ namespace BillingManagement.UI.ViewModels
 
 		public DelegateCommand<Invoice> DisplayInvoiceCommand { get; private set; }
 		public DelegateCommand<Customer> DisplayCustomerCommand { get; private set; }
-
+		public DelegateCommand<Customer> SearchCommand { get; private set; }
+		public DelegateCommand<Customer> ReturnAllList { get; private set; }
+		public RelayCommand CloseApplicationCommand { get; set; }
 		public DelegateCommand<Customer> AddInvoiceToCustomerCommand { get; private set; }
 
 
 		public MainViewModel()
 		{
+			db = new CustomerContext();
+			DBCustomers = new ObservableCollection<Customer>();
+			SearchCommand = new DelegateCommand<Customer>(searchcommand);
+			ReturnAllList = new DelegateCommand<Customer>(returnAllList);
 			ChangeViewCommand = new ChangeViewCommand(ChangeView);
+			CloseApplicationCommand = new RelayCommand(closeapplication);
 			DisplayInvoiceCommand = new DelegateCommand<Invoice>(DisplayInvoice);
 			DisplayCustomerCommand = new DelegateCommand<Customer>(DisplayCustomer);
 
@@ -59,18 +101,42 @@ namespace BillingManagement.UI.ViewModels
 			customerViewModel = new CustomerViewModel();
 			invoiceViewModel = new InvoiceViewModel(customerViewModel.Customers);
 
+			seedData(customerViewModel, invoiceViewModel);
 			VM = customerViewModel;
 
 		}
+		public void seedData(CustomerViewModel cm, InvoiceViewModel im)
+		{
 
+			if (db.Customers.Count() <= 0)
+			{
+				
+				foreach (Customer customer in customerViewModel.Customers)
+				{
+					db.Customers.Add(customer);
+				}
+				foreach (Invoice invoice in invoiceViewModel.Invoices)
+				{
+					db.Invoices.Add(invoice);
+				}
+				db.SaveChanges();
+			}
+
+
+
+
+
+		}
 		private void ChangeView(string vm)
 		{
 			switch (vm)
 			{
 				case "customers":
+					ButtonEnabled = true;
 					VM = customerViewModel;
 					break;
 				case "invoices":
+					ButtonEnabled = false;
 					VM = invoiceViewModel;
 					break;
 			}
@@ -112,6 +178,63 @@ namespace BillingManagement.UI.ViewModels
 			result = VM == customerViewModel;
 			return result;
 		}
+		public void returnAllList(object parameter)
+		{
+			customerViewModel.ReturnAll();
+			SearchCriteria = null;
+			ReturnButton = false;
+		}
 
+		public void searchcommand(object parameter)
+		{
+			ReturnButton = true;
+			List<Customer> customerResult = new List<Customer>();
+			string input = searchCriteria as string;
+			int output;
+			string searchMethod;
+			if (!Int32.TryParse(input, out output))
+			{
+				searchMethod = "name";
+			}
+			else
+			{
+				searchMethod = "id";
+			}
+
+			switch (searchMethod)
+			{
+				case "id":
+
+					customerViewModel.SelectedCustomer = db.Customers.Find(output);
+					break;
+				case "name":
+					//SelectedContact = PhoneBookBusiness.GetContactByName(input);
+
+					customerResult = db.Customers.Where(customer => (customer.LastName.ToLower().StartsWith(input)) || (customer.Name.ToLower().StartsWith(input))).ToList();
+					DBCustomers.Clear();
+					if (customerResult.Count > 0)
+					{
+
+						foreach (Customer customer in customerResult)
+						{
+
+							DBCustomers.Add(customer);
+						}
+
+
+					}
+					customerViewModel.FindMethod(DBCustomers);
+					break;
+				default:
+					MessageBox.Show("Unkonwn search method");
+					break;
+			}
+
+
+		}
+		private void closeapplication(object parameter)
+		{
+			App.Current.Shutdown();
+		}
 	}
 }
