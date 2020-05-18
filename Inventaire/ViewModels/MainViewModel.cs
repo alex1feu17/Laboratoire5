@@ -208,7 +208,7 @@ namespace BillingManagement.UI.ViewModels
 					customerViewModel.SelectedCustomer = db.Customers.Find(output);
 					break;
 				case "name":
-					//SelectedContact = PhoneBookBusiness.GetContactByName(input);
+				
 
 					customerResult = db.Customers.Where(customer => (customer.LastName.ToLower().StartsWith(input)) || (customer.Name.ToLower().StartsWith(input))).ToList();
 					DBCustomers.Clear();

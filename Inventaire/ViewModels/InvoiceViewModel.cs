@@ -1,4 +1,5 @@
-﻿using BillingManagement.UI.Business;
+﻿using BillingManagement.Business;
+using BillingManagement.UI.Business;
 using BillingManagement.UI.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
