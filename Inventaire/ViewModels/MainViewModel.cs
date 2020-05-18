@@ -9,7 +9,10 @@ namespace BillingManagement.UI.ViewModels
     class MainViewModel : BaseViewModel
     {
 		private BaseViewModel _vm;
+		private bool buttonenabled = true;
 
+
+		private bool returnbutton = false;
 		public BaseViewModel VM
 		{
 			get { return _vm; }

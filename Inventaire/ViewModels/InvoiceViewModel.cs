@@ -12,11 +12,13 @@ namespace BillingManagement.UI.ViewModels
 	{
 		private Invoice selectedInvoice;
 		private ObservableCollection<Invoice> invoices;
-
+		CustomerContext db = new CustomerContext();
+		public ObservableCollection<Invoice> Allinvoices;
 		public InvoiceViewModel(IEnumerable<Customer> customerData)
 		{
-			BillingManagement.Business.InvoicesDataService ids = new BillingManagement.Business.InvoicesDataService(customerData);
-		
+			InvoicesDataService ids = new InvoicesDataService(customerData);
+			Invoices = new ObservableCollection<Invoice>(ids.GetAll().ToList());
+
 		}
 
 		public Invoice SelectedInvoice
